@@ -31,7 +31,7 @@ module tt_um_fing_synchronizer_hga #( parameter N = 8) (
                     stb <= ui_in[4];
     end
     // Connects to ground inputs 7 to 5 of ui_in
-    assign ui_in[7:5] = 3'b000;
+   // assign ui_in[7:5] = 3'b000;
 
 // More regs
     reg [(N-1):0] data_in; // Output from register of data in
