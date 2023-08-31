@@ -1,4 +1,4 @@
-
+`timescale 1ns/1ps
 module tt_um_fing_synchronizer_hga #( parameter N = 8) (
     input  wire [7:0] ui_in,    // Dedicated inputs - connected to the input switches
     output wire [7:0] uo_out,   // Dedicated outputs - connected to the 7 segment display
@@ -30,8 +30,8 @@ module tt_um_fing_synchronizer_hga #( parameter N = 8) (
             else if (ena)
                     stb <= ui_in[4];
     end
-    // Connects to ground inputs 7 to 0 of ui0_out
-       assign uio_out[7:0] = 8'b00000000;
+    // Connects to ground inputs 7 to 5 of ui_in
+    assign uio_out[7:0] = 8'b00000000;
 
 // More regs
     reg [(N-1):0] data_in; // Output from register of data in

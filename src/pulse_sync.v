@@ -1,8 +1,8 @@
-
+`timescale 1ns/1ps
 module pulse_sync #(parameter N=8) (
-    input  reg [N-1:0] data_in,   // data from registered input
+    input  wire [N-1:0] data_in,   // data from registered input
     output reg [N-1:0] data_out, // data after FF's
-    input  reg       stb,      // will go high when the design is enabled
+    input  wire       stb,      // will go high when the design is enabled
     input  wire       ena,      // will go high when the design is enabled
     input  wire       clk,      // clock
     input  wire       rst_n     // reset_n - low to reset
