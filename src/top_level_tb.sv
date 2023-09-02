@@ -20,8 +20,8 @@ module tb ();
 
     integer	j;
     // Clocks
-    always #18 clk = ~clk;
-    always #7 clk_2 = ~clk_2;
+    always #5 clk = ~clk;
+    always #10 clk_2 = ~clk_2;
 
     assign ui_in[0] = clk_2;
     assign ui_in[4] = stb;
@@ -46,7 +46,7 @@ module tb ();
         clk_2 <= 0;
         rst_n  <= 0;
         ena    <= 0;
-//        ui_in  <= 0;
+ //       ui_in  <= 0;
         uio_in <= 0;
         stb <= 0;
         sel <= '0;
@@ -74,21 +74,8 @@ module tb ();
      #5 stb <= 1;
     #20 stb <= 0;
         #50;
+    $finish;
     end
 
-    initial begin
-        #250
-        repeat (2) @(posedge clk);
-        rst_n  <= 1;
-        ena    <= 1;
-        
-        for (j=1; j<=5; j=j+1) begin//
-            repeat (5) @(posedge clk);
-            sel <= $random();
-            stb <= $random();
-            repeat (5) @(posedge clk);
-            uio_in <= $random();
-        end
-        #500 $stop;   // end of simulation;
-    end
+
 endmodule

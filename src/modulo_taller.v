@@ -1,4 +1,4 @@
-`timescale 1ns/1ps
+
 module tt_um_fing_synchronizer_hga #( parameter N = 8) (
     input  wire [7:0] ui_in,    // Dedicated inputs - connected to the input switches
     output wire [7:0] uo_out,   // Dedicated outputs - connected to the 7 segment display
@@ -13,14 +13,17 @@ module tt_um_fing_synchronizer_hga #( parameter N = 8) (
     reg clk_2;
     reg [2:0] sel;
     reg stb;
-
+    reg pulse_in;
+    wire pulse_out;
 
 // Connect wire to reg signals 
      always @(ui_in)
     begin
         clk_2 <= ui_in[0];
         sel   <= ui_in[3:1];
+	pulse_in <= ui_in[4];
     end
+
 
 // Strobe register
      always @(posedge clk or negedge rst_n)
@@ -38,6 +41,7 @@ module tt_um_fing_synchronizer_hga #( parameter N = 8) (
     reg [(N-1):0] data_out_0; // Metaestable output, no synch
     wire [(N-1):0] data_out_1;
     wire [(N-1):0] data_out_2;
+    wire [(N-1):0] data_out_3;
     reg [(N-1):0] uo_out_aux;
 // use bidirectionals as inputs
     assign uio_oe = 8'b00000000;
@@ -68,11 +72,16 @@ module tt_um_fing_synchronizer_hga #( parameter N = 8) (
         3'b001 : uo_out_aux  <= data_out_0;
         3'b010 : uo_out_aux  <= data_out_1;
         3'b011 : uo_out_aux  <= data_out_2;
+	3'b100 : uo_out_aux  <= data_out_3;
         endcase
     end
 
     assign uo_out = uo_out_aux;
-        
+
+// Instantiate tog_sync
+    tog_sync #(N) dut (.data_in(uio_in),.data_out(data_out_3),.clkA(clk),.clkB(clk_2),
+                  	.pulse_in  (pulse_in),.pulse_out(pulse_out),.rst_n(rst_n));
+
 // Instantiate 2FF
     two_FF two_FF(.data_in(data_in),.data_out(data_out_1),.ena(ena),.clk(clk_2),.rst_n(rst_n));
 // Instantiate pulse sync
