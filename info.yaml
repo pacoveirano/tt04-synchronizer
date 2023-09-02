@@ -1,6 +1,6 @@
 --- 
 # TinyTapeout project information
-project:
+  project: 
   wokwi_id:    0        # If using wokwi, set this to your project's ID
 
 # If using an HDL, set wokwi_id as 0 and uncomment and list your source files here. 
@@ -22,61 +22,75 @@ yaml_version: 4
 #
 # Here is a great example: https://github.com/davidsiaw/tt02-davidsiaw-stackcalc/blob/38c5647f83aad2aec675d566aa3d67b98f0aac81/info.yaml
 documentation: 
-  author:       "Matt Venn"
-  title:        "7 segment seconds"
+  author:       "Mateo Guerrero Gonzalo Hernandez Cesar Azambuya Francisco Veirano"
+  title:        "Clock synchronizer"
   language:     "Verilog"
-  description:  "Count up to 10, one second at a time."
+  description:  "Testing different ways of clocks synchronizer to avoid metastability problem."
 
 
 # Longer description of how the project works. You can use standard markdown format.
   how_it_works: |
-      Uses a set of registers to divide the clock, and then some combinational logic
-      to convert from binary to decimal for the display.
+    This project is composed by different clock synchronizer subblocks. This subblocks have the functionality of mitigate the problem of metastability 
+    caused when you have two clock domain. 
+    Then, with a selector, you can select this different subblocks in order to test and measure their performance to avoid this problem.
 
-      Puts the bottom 8 bits of the counter on the bidirectional outputs.
+    So, the project has:
+    A first register at the input for register the data. This 8bits-length data is register by CLK1. 
 
-      With all the inputs set to 0, the internal 24 bit compare is set to 10,000,000. This means the
-      counter will increment by one each second.
+    This data is register by another register but with another clock, in this case CLK2. The data of the output of this register
+    has a lot of probability to be metastable. 
 
-      If any inputs are non zero, then the input will be used as an bits 11 to 18 of the 24 bit compare register.
-      Example: setting the inputs to 00010000 will program 16384 into the compare register.
-      With a 10MHz clock the counter will increment ~610 times per second.
+    The output of the first register is the input of the three different blocks to be tested.
+
+    1- The first one, 2 flip-flop synchronizer, is composed by two register in cascade (A connected to B), triggered by CLK2. 
+    There is probability that while sampling the input A-d by flip flop A in CLK2 clock domain, output A-q may go into metastable state.
+    But during the one clock cycle period of CLK2 clock, output A-q may settle to some stable value. 
+    Output of flop B can go to metastable if A does not settle to stable value during one clock cycle, but probability for B to be metastable for
+    a complete destination clock cycle is very close to zero.
+
+    
+    2- The second, Recirculation mux synchronization, in order to synchronize data, a control pulse is generated in source clock domain (CLK1) when data is available at source flop.
+    Control Pulse is then synchronized using 2 flip flop synchronizer or pulse synchronizer (Toggle or Handshake) depending on clock ratio between source (CLK1) and destination (CLK2) domain.
+    Synchronized control pulse is used to sample the data on the bus in destination domain. Data should be stable until it is sampled in destination clock domain (CLK2).
+
+    
+    3- The third, Toggle synchronizer, is used to synchronize a pulse generating in source clock domain (CLK1) to destination clock domain (CLK2). 
+    A pulse cannot be synchronized directly using 2 FF synchronizer. While synchronizing from fast clock domain (CLk2) to slow clock domain (CLk1) 
+    using 2 FF synchronizer, the pulse can be skipped which can cause the loss of pulse detection and hence subsequent circuit which 
+    depends upon it, may not function properly. 
+
+   
+    
+
+      
 
 # Instructions on how someone could test your project, include things like what buttons do what and how to set the clock if needed
   how_to_test:  |
-      After reset, the counter should increase by one every second with a 10MHz input clock.
-      Experiment by changing the inputs to change the counting speed.
+      First, you need to define the frequency you want to use with CLK1 (slow clock) and CLK (fast clock).
+      After reset, you need to put a input data on data_in. 
+      Then, you need to use the corresponding enable of the block you want to test, 
+      and using the selector you can select the block. 
+      You will see at the output the signal and examine if the signal has a metastable state or not. 
+      Also, you can use the input stb and pulse_in to measure the performance of the blocks associated to this inputs. 
 
 # A description of what the inputs do (e.g. red button, SPI CLK, SPI MOSI, etc).
-  inputs:               
-    - compare bit 11
-    - compare bit 12
-    - compare bit 13
-    - compare bit 14
-    - compare bit 15
-    - compare bit 16
-    - compare bit 17
-    - compare bit 18
+  inputs:    
+    - clk, clock of the first clock domain.
+    - clk_2 connected to ui_in[0]. This is the second clock domain.
+    - sel connected to ui_in[3:1]. This the selector tu select the different output between the different blocks.
+    - pulse_in connected to ui_in[4]. This is the pulse needed to synchronize with the third block. 
+    - stb connected ui_in[4]. This is the pulse needed to synchronize with the second block.
+    - rst_n. Reset of the system. 
+    - ena. Enable of the system.
+    
 # A description of what the outputs do (e.g. status LED, SPI MISO, etc)
   outputs:
-    - segment a
-    - segment b
-    - segment c
-    - segment d
-    - segment e
-    - segment f
-    - segment g
-    - dot
+    - data_out connected to uo_out. This is the data output of the different block depending of the value of sel.
+    - uio_out
+    - uio_oe
 # A description of what the bidirectional I/O pins do (e.g. I2C SDA, I2C SCL, etc)
   bidirectional:
-    - second counter bit 0
-    - second counter bit 1
-    - second counter bit 2
-    - second counter bit 3
-    - second counter bit 4
-    - second counter bit 5
-    - second counter bit 6
-    - second counter bit 7
+    - data_in connected to uio_in, set as input. This is the data input
 
 # The following fields are optional
   tag:          "timer, test"      # comma separated list of tags: test, encryption, experiment, clock, animation, utility, industrial, pwm, fpga, alu, microprocessor, risc, riscv, sensor, signal generator, fft, filter, music, bcd, sound, serial, timer, random number generator, calculator, decoder, counter, puzzle, multiplier, game, oscillator,
