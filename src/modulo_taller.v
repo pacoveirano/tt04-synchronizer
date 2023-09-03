@@ -1,3 +1,4 @@
+`timescale 1ns/1ps
 module tt_um_fing_synchronizer_hga #( parameter N = 8) (
     input  wire [7:0] ui_in,    // Dedicated inputs - connected to the input switches
     output wire [7:0] uo_out,   // Dedicated outputs - connected to the 7 segment display
@@ -67,7 +68,7 @@ module tt_um_fing_synchronizer_hga #( parameter N = 8) (
         3'b010 : uo_out_aux  <= data_out_1;
         3'b011 : uo_out_aux  <= data_out_2;
 	    3'b100 : uo_out_aux  <= data_out_3;
-	    3'b101 : uo_out_aux  <= pulse_out;
+		3'b101 : uo_out_aux  <= {{(N-1){1'b0}},pulse_out};
         endcase
     end
 
@@ -95,7 +96,7 @@ module tt_um_fing_synchronizer_hga #( parameter N = 8) (
     );
 
 // Instantiate toggle sync
-    tog_sync #(N) toggle_sync (
+    tog_sync #(N) tog_sync (
         .data_in(data_in),   // data from registered input
         .data_out(data_out_3), // data after FF's
         .pulse_out(pulse_out),      // will go high when the design is enabled

@@ -9,6 +9,7 @@ project:
     - modulo_taller.v
     - pulse_sync.v
     - two_FF.v
+    - tog_sync.v
   top_module:  "tt_um_fing_synchronizer_hga"      # put the name of your top module here, make it unique by prepending your github username
 
 # How many tiles your design occupies? A single tile is about 167x108 uM.
