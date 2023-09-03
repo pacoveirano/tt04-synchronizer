@@ -31,15 +31,15 @@ documentation:
 
 # Longer description of how the project works. You can use standard markdown format.
   how_it_works: |
-    This project is composed by different clock synchronizer subblocks. This subblocks have the functionality of mitigate the problem of metastability 
-    caused when you have two clock domain. 
-    Then, with a selector, you can select this different subblocks in order to test and measure their performance to avoid this problem.
+    This project is composed by different clock synchronizer subblocks. The function of these subblocks is to mitigate the problem of metastability 
+    caused when you have two clock domains. 
+    Then, with a selector, you can select these different subblocks in order to test and measure their performance to avoid this problem.
 
     So, the project has:
-    A first register at the input for register the data. This 8bits-length data is register by CLK1. 
+    A first register at the input to register the data. This 8bits-length data is registered by CLK1. 
 
-    This data is register by another register but with another clock, in this case CLK2. The data of the output of this register
-    has a lot of probability to be metastable. 
+    This data is registered by another register but with another clock, in this case CLK2. The data of the output of this register
+    has a high probability to be metastable. 
 
     The output of the first register is the input of the three different blocks to be tested.
 
@@ -68,11 +68,11 @@ documentation:
 # Instructions on how someone could test your project, include things like what buttons do what and how to set the clock if needed
   how_to_test:  |
       First, you need to define the frequency you want to use with CLK1 (slow clock) and CLK (fast clock).
-      After reset, you need to put a input data on data_in. 
+      After reset, you need to put an input data on data_in. 
       Then, you need to use the corresponding enable of the block you want to test, 
       and using the selector you can select the block. 
       You will see at the output the signal and examine if the signal has a metastable state or not. 
-      Also, you can use the input stb and pulse_in to measure the performance of the blocks associated to this inputs. 
+      Also, you can use the input stb and pulse_in to measure the performance of the blocks associated to these inputs. 
 
 # A description of what the inputs do (e.g. red button, SPI CLK, SPI MOSI, etc).
   inputs:    
