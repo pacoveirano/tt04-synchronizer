@@ -8,6 +8,8 @@ module tb ();
     reg  clk;
     reg  rst_n;
     reg  ena;
+	reg  ena_blk;
+	reg  pulse_in;
     reg  clk_2;
     reg  stb;
     reg  [2:0] sel;
@@ -19,6 +21,7 @@ module tb ();
     wire [7:0] uio_oe;
 
     integer	j;
+
     // Clocks
     always #5 clk = ~clk;
     always #10 clk_2 = ~clk_2;
@@ -28,7 +31,8 @@ module tb ();
     assign ui_in[2] = sel[1];
     assign ui_in[3] = sel[2];
     assign ui_in[4] = stb;
-    
+    assign ui_in[5] = pulse_in;
+	assign ui_in[6] = ena_blk;
 
     
     tt_um_fing_synchronizer_hga tt_um_fing_synchronizer_hga(
@@ -48,7 +52,8 @@ module tb ();
         clk_2 <= 0;
         rst_n  <= 0;
         ena    <= 0;
- //       ui_in  <= 0;
+		ena_blk <= 0;
+		pulse_in <= 0;
         uio_in <= 0;
         stb <= 0;
         sel <= '0;
@@ -59,6 +64,7 @@ module tb ();
     //Simulación con SEL=0 únicamente registramos la entrada
         rst_n <= 1;
         ena   <= 1;
+		ena_blk <= 1;
         sel   <= 0;
         #3 uio_in <= 01010101;
         #30;
@@ -72,15 +78,21 @@ module tb ();
         #50
     //Simulación con SEL=3, registramos con sincro con señal de control
         sel <= 3;
-        #3 uio_in <= 11111111;
+        #3 uio_in <= 'hFF;
         #5 stb <= 1;
-        20 stb <= 0;
-    
+        #20 stb <= 0;
+    	#50
     //Simulación con SEL=4, registramos con sincro con señal de control
         sel <= 4;
         #3 uio_in <= 'hAB;
-        #5 stb <= 1;
-        20 stb <= 0;
+        #7 pulse_in <= 1;
+        #20 pulse_in  <= 0;
+		#50
+    //Simulación con SEL=5, registramos con sincro con señal de control
+        sel <= 5;
+        #3 uio_in <= 'hDA;
+        #5 pulse_in <= 1;
+        #20 pulse_in  <= 0;
         #50;
     $finish;
     end

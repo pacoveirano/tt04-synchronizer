@@ -10,8 +10,6 @@ module pulse_sync #(parameter N=8) (
     input  wire       rst_n     // reset_n - low to reset
 );
     reg [N-1:0] FF;
-    wire [N-1:0] mux_out;
-
     reg ctrl, stb_in, stb_out;
 
     assign data_out = FF;
@@ -28,12 +26,12 @@ module pulse_sync #(parameter N=8) (
     always @(posedge clkB or negedge rst_n)
     begin
         if (!rst_n) begin
-            ctrl1 <= 'b0;
-            ctrl2 <= 'b0;
+            ctrl 	<= 'b0;
+            stb_out <= 'b0;
         end
         else if (enaB) begin
-            ctrl1 <= stb;
-            ctrl2 <= ctrl1;
+            ctrl <= stb_in;
+            stb_out <= ctrl;
         end
     end
 
@@ -41,8 +39,8 @@ module pulse_sync #(parameter N=8) (
     begin
         if (!rst_n)
             FF <= 'b0;
-        else if (enaB)
-            FF <= mux_out;
+        else if (enaB & stb_out)
+            FF <= data_in;
     end
 endmodule
 

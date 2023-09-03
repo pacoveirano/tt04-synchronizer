@@ -67,7 +67,7 @@ module tt_um_fing_synchronizer_hga #( parameter N = 8) (
         3'b010 : uo_out_aux  <= data_out_1;
         3'b011 : uo_out_aux  <= data_out_2;
 	    3'b100 : uo_out_aux  <= data_out_3;
-	    3'b101 : uo_out_aux  <= [0,0,0,0,0,0,0,pulse_out];
+	    3'b101 : uo_out_aux  <= pulse_out;
         endcase
     end
 
@@ -88,13 +88,14 @@ module tt_um_fing_synchronizer_hga #( parameter N = 8) (
         .data_out(data_out_2),
         .enaA(enable_blocks),
         .enaB(enable_blocks),
-        .clk(clk_2),
+        .clkA(clk),
+		.clkB(clk_2),
         .stb(stb),
         .rst_n(rst_n)
     );
 
 // Instantiate toggle sync
-    toggle_sync #(N) tog_sync (
+    tog_sync #(N) toggle_sync (
         .data_in(data_in),   // data from registered input
         .data_out(data_out_3), // data after FF's
         .pulse_out(pulse_out),      // will go high when the design is enabled

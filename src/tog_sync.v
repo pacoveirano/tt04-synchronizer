@@ -21,7 +21,7 @@ module tog_sync #(parameter N=8) (
         end
         else begin
             if (pulse_in & enaA) 
-		        A <= ~A;
+		        A <= A^pulse_in;
         end
     end
 
