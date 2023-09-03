@@ -79,7 +79,7 @@ documentation:
     - clk, clock of the first clock domain.
     - clk_2 connected to ui_in[0]. This is the second clock domain.
     - sel connected to ui_in[3:1]. This the selector tu select the different output between the different blocks.
-    - pulse_in connected to ui_in[4]. This is the pulse needed to synchronize with the third block. 
+    - pulse_in connected to ui_in[5]. This is the pulse needed to synchronize with the third block. 
     - stb connected ui_in[4]. This is the pulse needed to synchronize with the second block.
     - rst_n. Reset of the system. 
     - ena. Enable of the system.
