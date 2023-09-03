@@ -68,7 +68,7 @@ module tt_um_fing_synchronizer_hga #( parameter N = 8) (
         3'b010 : uo_out_aux  <= data_out_1;
         3'b011 : uo_out_aux  <= data_out_2;
 	    3'b100 : uo_out_aux  <= data_out_3;
-	    3'b101 : uo_out_aux  <= pulse_out;
+		3'b101 : uo_out_aux  <= {{(N-1){1'b0}},pulse_out};
         endcase
     end
 
