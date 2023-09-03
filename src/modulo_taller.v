@@ -60,7 +60,7 @@ module tt_um_fing_synchronizer_hga #( parameter N = 8) (
     end
 
 // MUX
-    always @ (data_out_0 or data_in or data_out_1 or data_out_2 or sel) begin
+    always @ (data_in or data_out_0 or data_out_1 or data_out_2 or data_out_3 or pulse_out or sel) begin
         case (sel)
         3'b000 : uo_out_aux  <= data_in;
         3'b001 : uo_out_aux  <= data_out_0;

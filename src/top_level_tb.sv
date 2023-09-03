@@ -80,19 +80,19 @@ module tb ();
         sel <= 3;
         #3 uio_in <= 'hFF;
         #5 stb <= 1;
-        #20 stb <= 0;
+        #40 stb <= 0;
     	#50
     //Simulación con SEL=4, registramos con sincro con señal de control
         sel <= 4;
         #3 uio_in <= 'hAB;
         #7 pulse_in <= 1;
-        #20 pulse_in  <= 0;
+        #40 pulse_in  <= 0;
 		#50
     //Simulación con SEL=5, registramos con sincro con señal de control
         sel <= 5;
         #3 uio_in <= 'hDA;
         #5 pulse_in <= 1;
-        #20 pulse_in  <= 0;
+        #40 pulse_in  <= 0;
         #50;
     $finish;
     end
