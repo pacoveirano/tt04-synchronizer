@@ -8,10 +8,12 @@ module pulse_sync #(parameter N=8) (
     input  wire       enaB,      // will go high when the design is enabled
     input  wire       clkA,      // clock
     input  wire       clkB,      // clock
-    input  wire       rst_n     // reset_n - low to reset
+    input  wire       rst_n,     // reset_n - low to reset
+	output reg 		ctrl, 
+	output reg 		stb_in 
 );
     reg [N-1:0] FF;
-    reg ctrl, stb_in, stb_o;
+	reg stb_o;
 
     assign data_out = FF;
     assign stb_out = stb_o;

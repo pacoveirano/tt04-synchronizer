@@ -2,11 +2,11 @@
 module two_FF #(parameter N=8) (
     input  wire [N-1:0] data_in,   // data from registered input
     output reg [N-1:0] data_out, // data after FF's
+    output reg [N-1:0] FF1,               // Output of the first FlipFlor
     input  wire       ena,      // will go high when the design is enabled
     input  wire       clk,      // clock
     input  wire       rst_n     // reset_n - low to reset
 );
-    reg [N-1:0] FF1;
 
     always @(posedge clk or negedge rst_n)
     begin

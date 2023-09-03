@@ -7,20 +7,24 @@ module enable_control #(parameter N=8) (
     output wire     ena_A,  //enable to clk A domain
     output wire     ena_1,  //enable
     output wire     ena_2,  //enable
-    output wire     ena_3  //enable
+    output wire     ena_3,  //enable
+	output wire     done  //enable
 	);
     reg [2:0] count;
     reg pulseA;
     wire trgB;
-    wire done;
 	reg en_1, en_2, en_3;
 
-    always @(posedge clkA or negedge rst_n or posedge done)
+	always @(posedge clkA or negedge rst_n)
     begin
-        if (!rst_n | done) 
+        if (!rst_n) 
             pulseA <= 'b0;
-        else if (trg) 
-            pulseA <= 'b1;
+        else begin 
+			if (trg & !done) 
+	            pulseA <= 'b1;
+			else if (!trg & done)
+				pulseA <= 'b0;
+		end
     end
 
     assign ena_A = trg;
@@ -29,13 +33,16 @@ module enable_control #(parameter N=8) (
 	assign ena_2 = en_2;
 	assign ena_3 = en_3;
 
-    always @(posedge clkB or negedge rst_n)
+	always @(posedge clkB or negedge rst_n)
     begin
-        if (!rst_n | done) begin
+        if (!rst_n) begin
             count <= 'b0;
 		end
-        else if (trgB) begin 
-			count <= count + 'b1;    
+        else begin 
+			if (trgB & !done) 
+				count <= count + 'b1;    
+			else
+				count <= 'b0;
         end
     end
 	

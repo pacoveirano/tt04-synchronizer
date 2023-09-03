@@ -8,12 +8,14 @@ module tog_sync #(parameter N=8) (
     input  wire     clkB,       // clock domain B
     input  wire     rst_n,      // reset_n - low to reset
     input  wire     enaA,         // enable - high
-    input  wire     enaB         // enable - high
-
+    input  wire     enaB,         // enable - high
+	output reg 		A,
+	output reg 		B1,
+	output reg 		B2,
+	output reg 		B3
     );
 
     reg [N-1:0] DATA_A;
-    reg A, B1, B2, B3;
 
     always @(posedge clkA or negedge rst_n)
     begin
