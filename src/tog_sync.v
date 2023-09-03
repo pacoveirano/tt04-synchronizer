@@ -9,6 +9,7 @@ module tog_sync #(parameter N=8) (
     input  wire     rst_n,      // reset_n - low to reset
     input  wire     enaA,         // enable - high
     input  wire     enaB         // enable - high
+
     );
 
     reg [N-1:0] DATA_A;

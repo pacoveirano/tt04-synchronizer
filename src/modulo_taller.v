@@ -13,11 +13,12 @@ module tt_um_fing_synchronizer_hga #( parameter N = 8) (
 // Inputs auxiliary clock, select, and strobe 
     reg clk_2;
     reg [2:0] sel;
-    reg stb, stb_out;
+    reg stb; 
+ 	wire stb_out;
     reg pulse_in;
     reg trigger;
     reg enable_blocks;
-    reg ena_A, ena_1, ena_2, ena_3, ena_4;
+    wire ena_A, ena_1, ena_2, ena_3;
     wire pulse_out;
 
 // Connect wire to reg signals 
@@ -50,7 +51,7 @@ module tt_um_fing_synchronizer_hga #( parameter N = 8) (
     begin
         if(!rst_n)
             data_in <= 8'b0;
-        else if (enable_blocks or ena_A)
+        else if (enable_blocks | ena_A)
             data_in <= uio_in;
     end
 
@@ -59,7 +60,7 @@ module tt_um_fing_synchronizer_hga #( parameter N = 8) (
     begin
         if(!rst_n)
             data_out_0 <= 8'b0;
-        else if (enable_blocks or ena_1)
+        else if (enable_blocks | ena_1)
             data_out_0 <= data_in;
     end
 
@@ -82,7 +83,7 @@ module tt_um_fing_synchronizer_hga #( parameter N = 8) (
     two_FF #(N) two_FF(
         .data_in(data_in),
         .data_out(data_out_1),
-        .ena(enable_blocks or ena_2),
+        .ena(enable_blocks | ena_2),
         .clk(clk_2),
         .rst_n(rst_n)
     );
@@ -91,8 +92,8 @@ module tt_um_fing_synchronizer_hga #( parameter N = 8) (
     pulse_sync #(N) pulse_sync(
         .data_in(data_in),
         .data_out(data_out_2),
-        .enaA(enable_blocks or ena_A),
-        .enaB(enable_blocks or ena_3),
+        .enaA(enable_blocks | ena_A),
+        .enaB(enable_blocks | ena_3),
         .clkA(clk),
 		.clkB(clk_2),
         .stb(stb),
@@ -109,21 +110,21 @@ module tt_um_fing_synchronizer_hga #( parameter N = 8) (
         .clkA(clk),      // clock domain A
         .clkB(clk_2),      // clock domain B
         .rst_n(rst_n),     // reset_n - low to reset
-        .enaA(enable_blocks or ena_A),
-        .enaB(enable_blocks or ena_4)
+        .enaA(enable_blocks | ena_A),
+        .enaB(enable_blocks | ena_3)
     );
 
     enable_control ec (
-        .trg(trigger),   // 
+        .trg(trigger),   // Pulse from clkA
         .clkA(clk),   // clockA
         .clkB(clk_2),   // clockB
         .rst_n(rst_n),   // reset_n - low to reset
-        .ena_A (ena_A),  //enable to clk A domain
-        .ena_1 (ena_1),  //enable
-        .ena_2 (ena_2),  //enable
-        .ena_3 (ena_3),  //enable
-        .ena_4 (ena_4),  //enable
+        .ena_A(ena_A),  //enable to clk A domain
+        .ena_1(ena_1),  //enable
+        .ena_2(ena_2),  //enable
+        .ena_3(ena_3)  //enable
     );
+
 endmodule
 
 

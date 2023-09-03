@@ -12,6 +12,7 @@ module tb ();
 	reg  pulse_in;
     reg  clk_2;
     reg  stb;
+	reg  trg;
     reg  [2:0] sel;
     reg  [7:0] uio_in;
     reg  [7:0] ui_in;
@@ -35,8 +36,6 @@ module tb ();
 	assign ui_in[6] = ena_blk;
 	assign ui_in[7] = trg;
 
-
-    
     tt_um_fing_synchronizer_hga tt_um_fing_synchronizer_hga(
         .ui_in      (ui_in),    // Dedicated inputs
         .uo_out     (uo_out),   // Dedicated outputs
@@ -105,10 +104,15 @@ module tb ();
         ena_blk <= 0;
         sel   <= 1;
         pulse_in <= 1;
+		stb <= 1;
+		uio_in <= 'hAB;
         trg <= '1;
-        #3 uio_in <= 'hAB;
+		#10 trg <= '0;
+        pulse_in <= 0;
+		stb <= 0;
+		uio_in <= 'h00;
         #450;
-    $stop;
+    $finish;
     end
 
 
