@@ -33,6 +33,8 @@ module tb ();
     assign ui_in[4] = stb;
     assign ui_in[5] = pulse_in;
 	assign ui_in[6] = ena_blk;
+	assign ui_in[7] = trg;
+
 
     
     tt_um_fing_synchronizer_hga tt_um_fing_synchronizer_hga(
@@ -57,6 +59,7 @@ module tb ();
         uio_in <= 0;
         stb <= 0;
         sel <= '0;
+        trg <= '0;
     end
 
     initial begin
@@ -94,7 +97,18 @@ module tb ();
         #5 pulse_in <= 1;
         #40 pulse_in  <= 0;
         #50;
-    $finish;
+    
+        #20
+    //Simulación con SEL=0 únicamente registramos la entrada
+        rst_n <= 1;
+        ena   <= 1;
+        ena_blk <= 0;
+        sel   <= 1;
+        pulse_in <= 1;
+        trg <= '1;
+        #3 uio_in <= 'hAB;
+        #450;
+    $stop;
     end
 
 

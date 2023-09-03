@@ -3,12 +3,12 @@ module enable_control #(parameter N=8) (
     input  wire     trg,   // 
     input  wire     clkA,   // clockA
     input  wire     clkB,   // clockB
-    input  wire     rst_n   // reset_n - low to reset
-    output wire     ena_1,  //enable to clk A domain
+    input  wire     rst_n,   // reset_n - low to reset
+    output wire     ena_A,  //enable to clk A domain
+    output wire     ena_1,  //enable
     output wire     ena_2,  //enable
     output wire     ena_3,  //enable
     output wire     ena_4,  //enable
-    output wire     ena_5,  //enable
 
 );
     reg [2:0] count;
@@ -24,7 +24,7 @@ module enable_control #(parameter N=8) (
             pulseA <= 'b1;
     end
 
-    assign ena_1 = trg;
+    assign ena_A = trg;
     assign trgB = trg ^ pulseA;
 
     always @(posedge clkB or negedge rst_n)
@@ -46,40 +46,40 @@ module enable_control #(parameter N=8) (
     always @(count)
     case (count)
         'b000 : begin
+            ena_1 <= 'b0;
             ena_2 <= 'b0;
             ena_3 <= 'b0;
             ena_4 <= 'b0;
-            ena_5 <= 'b0;
         end
         'b001 : begin
+            ena_1 <= 'b1;
             ena_2 <= 'b1;
             ena_3 <= 'b1;
             ena_4 <= 'b1;
-            ena_5 <= 'b1;
         end
         'b010 : begin
+            ena_1 <= 'b0;
+            ena_2 <= 'b1;
+            ena_3 <= 'b1;
+            ena_4 <= 'b1;
+        end
+        'b011 : begin
+            ena_1 <= 'b0;
             ena_2 <= 'b0;
             ena_3 <= 'b1;
             ena_4 <= 'b1;
-            ena_5 <= 'b1;
         end
-        'b011 : begin
+        'b100 : begin
+            ena_1 <= 'b0;
             ena_2 <= 'b0;
             ena_3 <= 'b0;
             ena_4 <= 'b1;
-            ena_5 <= 'b1;
-        end
-        'b100 : begin
-            ena_2 <= 'b0;
-            ena_3 <= 'b0;
-            ena_4 <= 'b0;
-            ena_5 <= 'b1;
         end
 		default : begin
+            ena_1 <= 'b0;
             ena_2 <= 'b0;
             ena_3 <= 'b0;
             ena_4 <= 'b0;
-            ena_5 <= 'b0;
         end
     endcase
 

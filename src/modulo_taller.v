@@ -13,9 +13,11 @@ module tt_um_fing_synchronizer_hga #( parameter N = 8) (
 // Inputs auxiliary clock, select, and strobe 
     reg clk_2;
     reg [2:0] sel;
-    reg stb;
+    reg stb, stb_out;
     reg pulse_in;
+    reg trigger;
     reg enable_blocks;
+    reg ena_A, ena_1, ena_2, ena_3, ena_4;
     wire pulse_out;
 
 // Connect wire to reg signals 
@@ -26,6 +28,7 @@ module tt_um_fing_synchronizer_hga #( parameter N = 8) (
         stb     <= ui_in[4];
 	    pulse_in <= ui_in[5];
 	    enable_blocks <= ui_in[6];
+        trigger <= ui_in[7];
     end
 
 // Connects to ground inputs 7 to 5 of ui_in
@@ -47,7 +50,7 @@ module tt_um_fing_synchronizer_hga #( parameter N = 8) (
     begin
         if(!rst_n)
             data_in <= 8'b0;
-        else if (enable_blocks)
+        else if (enable_blocks or ena_A)
             data_in <= uio_in;
     end
 
@@ -56,7 +59,7 @@ module tt_um_fing_synchronizer_hga #( parameter N = 8) (
     begin
         if(!rst_n)
             data_out_0 <= 8'b0;
-        else if (enable_blocks)
+        else if (enable_blocks or ena_1)
             data_out_0 <= data_in;
     end
 
@@ -68,7 +71,7 @@ module tt_um_fing_synchronizer_hga #( parameter N = 8) (
         3'b010 : uo_out_aux  <= data_out_1;
         3'b011 : uo_out_aux  <= data_out_2;
 	    3'b100 : uo_out_aux  <= data_out_3;
-		3'b101 : uo_out_aux  <= {{(N-1){1'b0}},pulse_out};
+		3'b101 : uo_out_aux  <= {{(N-2){1'b0}}, stb_out, pulse_out};
 		default : uo_out_aux <= 'b0;
         endcase
     end
@@ -79,7 +82,7 @@ module tt_um_fing_synchronizer_hga #( parameter N = 8) (
     two_FF #(N) two_FF(
         .data_in(data_in),
         .data_out(data_out_1),
-        .ena(enable_blocks),
+        .ena(enable_blocks or ena_2),
         .clk(clk_2),
         .rst_n(rst_n)
     );
@@ -88,11 +91,12 @@ module tt_um_fing_synchronizer_hga #( parameter N = 8) (
     pulse_sync #(N) pulse_sync(
         .data_in(data_in),
         .data_out(data_out_2),
-        .enaA(enable_blocks),
-        .enaB(enable_blocks),
+        .enaA(enable_blocks or ena_A),
+        .enaB(enable_blocks or ena_3),
         .clkA(clk),
 		.clkB(clk_2),
         .stb(stb),
+        .stb_out(stb_out),
         .rst_n(rst_n)
     );
 
@@ -105,11 +109,21 @@ module tt_um_fing_synchronizer_hga #( parameter N = 8) (
         .clkA(clk),      // clock domain A
         .clkB(clk_2),      // clock domain B
         .rst_n(rst_n),     // reset_n - low to reset
-        .enaA(enable_blocks),
-        .enaB(enable_blocks)
-
+        .enaA(enable_blocks or ena_A),
+        .enaB(enable_blocks or ena_4)
     );
 
+    enable_control ec (
+        .trg(trigger),   // 
+        .clkA(clk),   // clockA
+        .clkB(clk_2),   // clockB
+        .rst_n(rst_n),   // reset_n - low to reset
+        .ena_A (ena_A),  //enable to clk A domain
+        .ena_1 (ena_1),  //enable
+        .ena_2 (ena_2),  //enable
+        .ena_3 (ena_3),  //enable
+        .ena_4 (ena_4),  //enable
+    );
 endmodule
 
 
