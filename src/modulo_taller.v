@@ -96,7 +96,7 @@ module tt_um_fing_synchronizer_hga #( parameter N = 8) (
     );
 
 // Instantiate toggle sync
-    tog_sync #(N) toggle_sync (
+    toggle_sync #(N) toggle_sync (
         .data_in(data_in),   // data from registered input
         .data_out(data_out_3), // data after FF's
         .pulse_out(pulse_out),      // will go high when the design is enabled
