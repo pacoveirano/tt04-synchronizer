@@ -19,6 +19,9 @@ module tb ();
     reg  [2:0] sel;
     reg  [7:0] uio_in;
     reg  [7:0] ui_in;
+    reg  ena_blk;
+	 reg  pulse_in;
+	 reg  trg;    
 
     wire [7:0] uo_out;
     wire [7:0] uio_out;
@@ -30,8 +33,13 @@ module tb ();
  //   always #7 clk_2 = ~clk_2;
 
     assign ui_in[0] = clk_2;
+    assign ui_in[1] = sel[0];
+    assign ui_in[2] = sel[1];
+    assign ui_in[3] = sel[2];
     assign ui_in[4] = stb;
-    assign ui_in[3:1] = sel;
+    assign ui_in[5] = pulse_in;
+	 assign ui_in[6] = ena_blk;
+	 assign ui_in[7] = trg;
     
     tt_um_fing_synchronizer_hga tt_um_fing_synchronizer_hga(
         .ui_in      (ui_in),    // Dedicated inputs
