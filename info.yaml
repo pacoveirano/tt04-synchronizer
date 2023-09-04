@@ -39,7 +39,7 @@ documentation:
     So, the project has:
     A first register at the input to register the data. This 8bits-length data is registered by CLK1. 
 
-    This data is registered by another register but with another clock, in this case CLK2. The data of the output of this register
+    This data is registered by another second register but with another clock, in this case CLK2. The data of the output of this register
     has a high probability to be metastable. 
 
     The output of the first register is the input of the three different blocks to be tested.
@@ -56,10 +56,13 @@ documentation:
     Synchronized control pulse is used to sample the data on the bus in destination domain. Data should be stable until it is sampled in destination clock domain (CLK2).
 
     
-    3- The third, Toggle synchronizer, is used to synchronize a pulse generating in source clock domain (CLK1) to destination clock domain (CLK2). 
+    3- The third, Toggle block, is the same as Recirculation mux synchronization block, but in this case we generate the control pulse using a Toggle synchronizer.
+    The toggle synchronizer is used to synchronize a pulse generating in source clock domain (CLK1) to destination clock domain (CLK2). 
     A pulse cannot be synchronized directly using 2 FF synchronizer. While synchronizing from fast clock domain (CLk2) to slow clock domain (CLk1) 
     using 2 FF synchronizer, the pulse can be skipped which can cause the loss of pulse detection and hence subsequent circuit which 
     depends upon it, may not function properly. 
+
+    The project also has enable control block. This block genereate that the synchronizer subblocks exequite one time by generating a pulse in their respective enable input. 
 
    
     
@@ -68,11 +71,11 @@ documentation:
 
 # Instructions on how someone could test your project, include things like what buttons do what and how to set the clock if needed
   how_to_test:  |
-      First, you need to define the frequency you want to use with CLK1 (slow clock) and CLK (fast clock).
-      After reset, you need to put an input data on data_in. 
-      Then, you need to use the corresponding enable of the block you want to test, 
-      and using the selector you can select the block. 
-      You will see at the output the signal and examine if the signal has a metastable state or not. 
+      First, you need to define the frequency you want to use with CLK1 and CLK2.
+      After reset, you need to put an input data on data_in bus (uio_in). 
+      If you want to use de enable control block, you need to put enable_block (ui_in[6]) at low level all the time and make a pulse of one period of CLK1 duration. 
+      Otherwise, you can put enable_block in high level all the time. In this case, the output is going to be updating constantly.
+      You will see at the output the signal and examine if the signal has a metastable state or not, switching between the diferent output.  
       Also, you can use the input stb and pulse_in to measure the performance of the blocks associated to these inputs. 
 
 # A description of what the inputs do (e.g. red button, SPI CLK, SPI MOSI, etc).
@@ -84,12 +87,21 @@ documentation:
     - stb connected ui_in[4]. This is the pulse needed to synchronize with the second block.
     - rst_n. Reset of the system. 
     - ena. Enable of the system.
+    - enable_block connected to ui_in[6]. This signal is used to enable all subblocks. 
+    - trigger connected to ui_in[7]. This signal is to trigger enable control block. 
     
 # A description of what the outputs do (e.g. status LED, SPI MISO, etc)
   outputs:
     - data_out connected to uo_out. This is the data output of the different block depending of the value of sel.
-    - uio_out
-    - uio_oe
+    - When the input sel = 0 you will see the output of the first FF (triggered by CLK1).
+    - When the input sel = 1 you will see the output of the second FF (triggered by CLK2). 
+    - When the input sel = 2 you will see the first block using to synchronize (triggered by CLK2).
+    - When the input sel = 3 you will see the second block using to synchronize (triggered by CLK1 and CLK2).
+    - When the input sel = 4 you will see the third block using to synchronize (triggered by CLK2). 
+    - When the input sel = 5 you will see the output of 5 {stb_in, ctrl, stb_out, A, B1, B2, B3, pulse_out}, the intermediate signals of the different blocks. 
+    - When the input sel = 6 you will see the output of 6 {0,0, ena_A, ena_1, ena_2, ena_3, done} the intermediate enable of the different blocks. 
+    - When the input sel = 7 you will see the output of the first FF (A) of the first block (triggered by CLK1). 
+    
 # A description of what the bidirectional I/O pins do (e.g. I2C SDA, I2C SCL, etc)
   bidirectional:
     - data_in connected to uio_in, set as input. This is the data input
